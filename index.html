@@ -184,18 +184,23 @@
 
   // ==================== SOUND ENGINE ====================
   const Sound = {
-    ctx: null, enabled: true, master: null, songStep: 0,
+    ctx: null, enabled: true, master: null, musicGain: null, chantGain: null,
+    chantStep: 0, musicOn: false, musicStep: 0, musicNextTime: 0, tempo: 128, intensity: 0,
     init() {
       if (this.ctx) return;
       try {
         this.ctx = new (window.AudioContext || window.webkitAudioContext)();
         this.master = this.ctx.createGain();
-        this.master.gain.value = 0.35;
+        this.master.gain.value = this.enabled ? 0.4 : 0;
         this.master.connect(this.ctx.destination);
+        // sub-mix for the looping score, kept under the SFX
+        this.musicGain = this.ctx.createGain(); this.musicGain.gain.value = 0.55; this.musicGain.connect(this.master);
+        // sub-mix for the doll's chant
+        this.chantGain = this.ctx.createGain(); this.chantGain.gain.value = 0.9; this.chantGain.connect(this.master);
       } catch (e) { this.enabled = false; }
     },
     resume() { if (this.ctx && this.ctx.state === "suspended") this.ctx.resume(); },
-    tone(freq, dur, type = "sine", vol = 0.5, when = 0, slideTo = null) {
+    tone(freq, dur, type = "sine", vol = 0.5, when = 0, slideTo = null, dest = null) {
       if (!this.enabled || !this.ctx) return;
       const t0 = this.ctx.currentTime + when;
       const osc = this.ctx.createOscillator(), g = this.ctx.createGain();
@@ -204,7 +209,7 @@
       g.gain.setValueAtTime(0.0001, t0);
       g.gain.exponentialRampToValueAtTime(vol, t0 + 0.01);
       g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
-      osc.connect(g); g.connect(this.master);
+      osc.connect(g); g.connect(dest || this.master);
       osc.start(t0); osc.stop(t0 + dur + 0.02);
     },
     noise(dur, vol = 0.5, when = 0, filterFreq = 1000) {
@@ -220,17 +225,97 @@
       src.connect(flt); flt.connect(g); g.connect(this.master);
       src.start(t0);
     },
+    // ---- SFX ----
     green() { this.tone(523, 0.12, "triangle", 0.4); this.tone(784, 0.18, "triangle", 0.35, 0.1); },
-    red()   { this.tone(392, 0.25, "sawtooth", 0.4, 0, 220); },
+    red()   { this.tone(392, 0.28, "sawtooth", 0.4, 0, 180); this.tone(196, 0.4, "sine", 0.3, 0, 130); },
     step(fast) { this.noise(0.06, fast ? 0.18 : 0.12, 0, 500); },
-    gunshot() { this.noise(0.3, 0.9, 0, 1800); this.tone(90, 0.25, "square", 0.6, 0, 40); },
+    gunshot() { this.noise(0.32, 0.9, 0, 1800); this.tone(90, 0.25, "square", 0.6, 0, 40); this.tone(150, 0.15, "sawtooth", 0.4, 0, 60); },
     aiShot() { this.noise(0.18, 0.4, 0, 1400); this.tone(80, 0.14, "square", 0.28, 0, 40); },
-    win() { [523, 659, 784, 1047].forEach((f, i) => this.tone(f, 0.3, "triangle", 0.4, i * 0.12)); },
+    win() { [523, 659, 784, 1047, 1319].forEach((f, i) => this.tone(f, 0.32, "triangle", 0.4, i * 0.11)); },
     tick() { this.tone(1200, 0.05, "square", 0.25); },
-    songNote() {
-      const notes = [392, 392, 440, 440, 392, 392, 330, 392, 392, 330, 330, 294];
-      const f = notes[this.songStep % notes.length]; this.songStep++;
-      this.tone(f, 0.22, "sine", 0.18);
+    // ---- The doll's chant: "Mu-gung-hwa kko-ci pi-eot-seum-ni-da" (traditional melody), accelerates ----
+    chant() {
+      // 10-syllable phrase; a sing-song rise then fall, like the doll's turn-warning
+      const mel = [330, 330, 392, 392, 440, 392, 330, 294, 330, 262];
+      const f = mel[this.chantStep % mel.length];
+      const isPhraseEnd = (this.chantStep % mel.length) === mel.length - 1;
+      this.chantStep++;
+      this.tone(f, 0.2, "triangle", 0.22, 0, null, this.chantGain);
+      this.tone(f * 2, 0.18, "sine", 0.10, 0, null, this.chantGain);
+      if (isPhraseEnd) this.tone(f / 2, 0.5, "sine", 0.14, 0, null, this.chantGain);
+    },
+    resetChant() { this.chantStep = 0; },
+    // ---- Background score: original tense marching loop (4-bar minor progression) ----
+    startMusic() {
+      if (!this.ctx || this.musicOn) return;
+      this.musicOn = true; this.musicStep = 0; this.musicNextTime = this.ctx.currentTime + 0.1;
+    },
+    stopMusic() { this.musicOn = false; },
+    setIntensity(v) { this.intensity = v; }, // 0 = menu/calm, 1 = mid-race tension
+    schedule() {
+      if (!this.musicOn || !this.ctx || !this.enabled) return;
+      const spb = 60 / this.tempo / 4;          // seconds per 16th step
+      while (this.musicNextTime < this.ctx.currentTime + 0.18) {
+        this.playStep(this.musicStep, this.musicNextTime, spb);
+        this.musicStep = (this.musicStep + 1) % 64; // 4 bars of 16 steps
+        this.musicNextTime += spb;
+      }
+    },
+    playStep(step, t, spb) {
+      const dest = this.musicGain;
+      const bar = Math.floor(step / 16), s = step % 16;
+      // i - v - VI - VII in A minor: Am, Em, F, G
+      const chords = [
+        { r: 110.00, third: 130.81, fifth: 164.81 }, // Am
+        { r: 82.41,  third: 98.00,  fifth: 123.47 }, // Em
+        { r: 87.31,  third: 110.00, fifth: 130.81 }, // F
+        { r: 98.00,  third: 123.47, fifth: 146.83 }, // G
+      ][bar];
+      const tense = 0.5 + this.intensity * 0.5;
+      // Bass on eighth notes, octave hop
+      if (s % 2 === 0) {
+        const f = (s % 4 === 0) ? chords.r : chords.fifth;
+        this._note(f, spb * 1.7, "sawtooth", 0.16 * tense, t, dest, 900);
+      }
+      // Kick on the beat
+      if (s % 4 === 0) this._kick(t);
+      // Hat on offbeats
+      if (s % 2 === 1) this.noiseAt(0.03, 0.05 * tense, t, 7000, dest);
+      // Lead motif (staccato plucks, one octave up), only when there's tension
+      const leadSteps = { 0: chords.r * 2, 3: chords.fifth * 2, 6: chords.third * 2, 8: chords.r * 4, 10: chords.fifth * 2, 13: chords.third * 2 };
+      if (leadSteps[s] && this.intensity > 0.15) {
+        this._note(leadSteps[s], spb * 1.2, "square", 0.06 * this.intensity, t, dest, 4000);
+      }
+    },
+    _note(freq, dur, type, vol, t, dest, cutoff) {
+      if (!this.enabled || !this.ctx) return;
+      const osc = this.ctx.createOscillator(), g = this.ctx.createGain(), flt = this.ctx.createBiquadFilter();
+      osc.type = type; osc.frequency.setValueAtTime(freq, t);
+      flt.type = "lowpass"; flt.frequency.value = cutoff || 1200;
+      g.gain.setValueAtTime(0.0001, t);
+      g.gain.exponentialRampToValueAtTime(vol, t + 0.008);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+      osc.connect(flt); flt.connect(g); g.connect(dest);
+      osc.start(t); osc.stop(t + dur + 0.02);
+    },
+    _kick(t) {
+      if (!this.enabled || !this.ctx) return;
+      const osc = this.ctx.createOscillator(), g = this.ctx.createGain();
+      osc.type = "sine"; osc.frequency.setValueAtTime(140, t); osc.frequency.exponentialRampToValueAtTime(45, t + 0.12);
+      g.gain.setValueAtTime(0.5, t); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.18);
+      osc.connect(g); g.connect(this.musicGain); osc.start(t); osc.stop(t + 0.2);
+    },
+    noiseAt(dur, vol, t, filterFreq, dest) {
+      if (!this.enabled || !this.ctx) return;
+      const n = Math.floor(this.ctx.sampleRate * dur);
+      const buf = this.ctx.createBuffer(1, n, this.ctx.sampleRate);
+      const d = buf.getChannelData(0);
+      for (let i = 0; i < n; i++) d[i] = (Math.random() * 2 - 1) * (1 - i / n);
+      const src = this.ctx.createBufferSource(); src.buffer = buf;
+      const flt = this.ctx.createBiquadFilter(); flt.type = "highpass"; flt.frequency.value = filterFreq;
+      const g = this.ctx.createGain(); g.gain.value = vol;
+      src.connect(flt); flt.connect(g); g.connect(dest || this.master);
+      src.start(t);
     },
   };
 
@@ -260,11 +345,11 @@
   //   bold = 0..1 aggressiveness (creep faster, pause less, closer to the limit)
   //   risk = chance per red phase they gamble and keep creeping into red (may get caught)
   const AI_PROFILES = {
-    gihun:    { spd: 1.00, bold: 0.62, risk: 0.07 },
-    saebyeok: { spd: 1.06, bold: 0.72, risk: 0.06 }, // quick & confident
-    sangwoo:  { spd: 0.99, bold: 0.50, risk: 0.03 }, // careful strategist, survives most
-    ali:      { spd: 0.97, bold: 0.56, risk: 0.06 },
-    ilnam:    { spd: 0.90, bold: 0.80, risk: 0.13 }, // reckless, overcommits — caught most
+    gihun:    { spd: 1.00, bold: 0.60, risk: 0.035 },
+    saebyeok: { spd: 1.05, bold: 0.66, risk: 0.030 }, // quick & confident, finishes strong
+    sangwoo:  { spd: 0.99, bold: 0.48, risk: 0.015 }, // careful strategist, survives most
+    ali:      { spd: 0.97, bold: 0.54, risk: 0.030 },
+    ilnam:    { spd: 0.92, bold: 0.72, risk: 0.070 }, // reckless, still caught most often
   };
 
   // ==================== LEADERBOARD ====================
@@ -330,7 +415,7 @@
       graceAfterRed: 0, caught: false, won: false, humanRank: 0,
       shake: 0, fakeoutPending: false, fakeSnap: null, warnPulse: 0,
       clouds: [{ x: 120, y: 80, s: 1 }, { x: 520, y: 130, s: 0.7 }, { x: 760, y: 70, s: 0.9 }],
-      particles: [], time2: 0, songTimerLocal: 0,
+      particles: [], time2: 0, chantTimer: 0,
       skillDur: 0, skillCd: 0, skillFx: 0,
     };
   }
@@ -350,6 +435,10 @@
   window.addEventListener("pointerup", holdEnd);
   window.addEventListener("pointercancel", holdEnd);
   window.addEventListener("blur", () => { keys.clear(); setRunning(false); });
+  // Start the score on the first user interaction (browsers block autoplay before a gesture)
+  function firstGesture() { Sound.init(); Sound.resume(); Sound.startMusic(); window.removeEventListener("pointerdown", firstGesture); window.removeEventListener("keydown", firstGesture); }
+  window.addEventListener("pointerdown", firstGesture);
+  window.addEventListener("keydown", firstGesture);
 
   // ==================== UI ====================
   const startScreen = document.getElementById("startScreen");
@@ -411,7 +500,7 @@
   document.getElementById("clearBtn").addEventListener("click", () => { if (confirm("Clear all leaderboard scores?")) { localStorage.removeItem(LS_KEY); renderBoard(document.getElementById("boardMain")); updateBest(); } });
   document.getElementById("againBtn").addEventListener("click", startGame);
   document.getElementById("menuBtn").addEventListener("click", () => show(startScreen));
-  soundToggle.addEventListener("click", () => { Sound.enabled = !Sound.enabled; soundToggle.textContent = Sound.enabled ? "🔊" : "🔇"; if (Sound.master) Sound.master.gain.value = Sound.enabled ? 0.35 : 0; });
+  soundToggle.addEventListener("click", () => { Sound.enabled = !Sound.enabled; soundToggle.textContent = Sound.enabled ? "🔊" : "🔇"; if (Sound.master) Sound.master.gain.value = Sound.enabled ? 0.4 : 0; });
 
   function show(screen) {
     [startScreen, endScreen, boardScreen].forEach(s => s.classList.add("hidden"));
@@ -426,7 +515,7 @@
   function updateBest() { const b = bestScore(); document.getElementById("bestVal").textContent = b == null ? "—" : b.toLocaleString(); }
 
   function startGame() {
-    Sound.init(); Sound.resume();
+    Sound.init(); Sound.resume(); Sound.startMusic();
     playerName = (nameInput.value || "PLAYER").trim() || "PLAYER";
     game = newGame();
     state = GameState.PLAYING;
@@ -493,8 +582,12 @@
     if (Math.ceil(prevTime) !== Math.ceil(g.time) && g.time <= 10 && g.time > 0) Sound.tick();
     if (g.time <= 0) { g.time = 0; g.human.caught = true; g.shake = 0.6; spawnBlood(g, racerX(g.human), LANE_Y[0] - 30); return endGame(false); }
 
-    // Doll's song during green
-    if (g.light === "green") { g.songTimerLocal -= dt; if (g.songTimerLocal <= 0) { Sound.songNote(); g.songTimerLocal = 0.28; } }
+    // Doll's chant during green — accelerates the longer green lasts (like the show's turn-warning)
+    if (g.light === "green" && !freeze) {
+      g.chantTimer -= dt;
+      if (g.chantTimer <= 0) { Sound.chant(); g.chantTimer = Math.max(0.11, 0.30 - g.lightElapsed * 0.045); }
+    }
+    Sound.setIntensity(Math.min(1, 0.55 + g.human.dist / 200)); // score tension rises as you advance
 
     // Light cycle (frozen by Il-nam's skill)
     if (!freeze) {
@@ -510,12 +603,12 @@
           for (const r of g.racers) {
             if (!r.ai) continue;
             const gamble = Math.random() < r.ai.risk;
-            r.ai.reactTimer = gamble ? 0.05 + Math.random() * 0.16 : 0;
+            r.ai.reactTimer = gamble ? 0.05 + Math.random() * 0.12 : 0;
           }
         } else {
           g.light = "green"; g.lightElapsed = 0; g.dollTurning = -1;
           g.lightTimer = (d.greenMin + Math.random() * (d.greenMax - d.greenMin)) / scale;
-          Sound.green(); g.fakeoutPending = false;
+          Sound.green(); Sound.resetChant(); g.chantTimer = 0; g.fakeoutPending = false;
           for (const r of g.racers) { if (r.ai) r.ai.pauseTimer = 0; }
         }
       }
@@ -550,8 +643,8 @@
       else {
         const ai = r.ai;
         const spdBase = d.speed * ai.spd;
-        // Creep only as fast as they can still brake from; bolder players ride closer to the limit
-        const creepMul = Math.min(1, (safeSpeed / spdBase) * (0.66 + ai.bold * 0.26));
+        // Creep only as fast as they can still brake from (with margin); bolder players ride closer to the limit
+        const creepMul = Math.min(1, (safeSpeed / spdBase) * (0.60 + ai.bold * 0.22));
         if (g.light === "green" && !freeze) {
           if (g.lightElapsed < safeWindow) {
             // Green just started — red can't come yet: sprint full speed
@@ -875,7 +968,9 @@
   function loop(now) {
     const dt = Math.min(0.05, (now - lastT) / 1000);
     lastT = now;
+    if (state !== GameState.PLAYING) Sound.setIntensity(0.12); // calm on menus/end
     update(dt);
+    Sound.schedule();
     draw();
     requestAnimationFrame(loop);
   }
