@@ -254,13 +254,17 @@
   };
   let character = "gihun";
 
-  // AI personality per character (reaction = how long they keep moving into red; risk = gamble chance; spd = pace)
+  // AI personality. Like a real player: sprint only while red can't come yet, then creep at a speed
+  // they can actually brake from, pausing to stay safe. Bolder players creep closer to the danger line.
+  //   spd  = pace multiplier
+  //   bold = 0..1 aggressiveness (creep faster, pause less, closer to the limit)
+  //   risk = chance per red phase they gamble and keep creeping into red (may get caught)
   const AI_PROFILES = {
-    gihun:    { react: 0.14, risk: 0.16, spd: 1.00 },
-    saebyeok: { react: 0.09, risk: 0.10, spd: 1.05 },
-    sangwoo:  { react: 0.10, risk: 0.06, spd: 0.99 },
-    ali:      { react: 0.18, risk: 0.14, spd: 0.97 },
-    ilnam:    { react: 0.24, risk: 0.26, spd: 0.91 },
+    gihun:    { spd: 1.00, bold: 0.62, risk: 0.07 },
+    saebyeok: { spd: 1.06, bold: 0.72, risk: 0.06 }, // quick & confident
+    sangwoo:  { spd: 0.99, bold: 0.50, risk: 0.03 }, // careful strategist, survives most
+    ali:      { spd: 0.97, bold: 0.56, risk: 0.06 },
+    ilnam:    { spd: 0.90, bold: 0.80, risk: 0.13 }, // reckless, overcommits — caught most
   };
 
   // ==================== LEADERBOARD ====================
@@ -306,10 +310,10 @@
 
   function makeRacer(key, isAI, laneIndex) {
     const r = {
-      key, isAI, laneIndex, dist: 0, vel: 0, running: false,
+      key, isAI, laneIndex, dist: 0, vel: 0, running: false, speedMul: 1,
       runPhase: laneIndex * 1.7, caught: false, finished: false, rank: 0, footTimer: 0,
     };
-    if (isAI) { const p = AI_PROFILES[key]; r.ai = { react: p.react, risk: p.risk, spd: p.spd, reactTimer: 0 }; }
+    if (isAI) { r.ai = { ...AI_PROFILES[key], pauseTimer: 0, reactTimer: 0 }; }
     return r;
   }
 
@@ -322,7 +326,7 @@
     return {
       racers, human: racers[0], finishOrder: [],
       time: d.time, maxTime: d.time,
-      light: "green", lightTimer: 2.2, dollAngle: 0, dollTurning: 0,
+      light: "green", lightTimer: 2.2, lightElapsed: 0, dollAngle: 0, dollTurning: 0,
       graceAfterRed: 0, caught: false, won: false, humanRank: 0,
       shake: 0, fakeoutPending: false, fakeSnap: null, warnPulse: 0,
       clouds: [{ x: 120, y: 80, s: 1 }, { x: 520, y: 130, s: 0.7 }, { x: 760, y: 70, s: 0.9 }],
@@ -494,23 +498,25 @@
 
     // Light cycle (frozen by Il-nam's skill)
     if (!freeze) {
+      g.lightElapsed += dt;
       g.lightTimer -= dt;
       if (g.lightTimer <= 0) {
         if (g.light === "green") {
-          g.light = "red"; g.dollTurning = 1; g.graceAfterRed = d.grace / scale;
+          g.light = "red"; g.lightElapsed = 0; g.dollTurning = 1; g.graceAfterRed = d.grace / scale;
           g.lightTimer = (d.redMin + Math.random() * (d.redMax - d.redMin));
           Sound.red();
           g.fakeoutPending = Math.random() < d.fakeout;
-          // AI decides how long it will keep moving into this red phase
+          // Most AI stop the instant red shows; only gamblers keep creeping (and risk the doll)
           for (const r of g.racers) {
             if (!r.ai) continue;
             const gamble = Math.random() < r.ai.risk;
-            r.ai.reactTimer = r.ai.react + (gamble ? 0.35 + Math.random() * 0.4 : Math.random() * 0.06);
+            r.ai.reactTimer = gamble ? 0.05 + Math.random() * 0.16 : 0;
           }
         } else {
-          g.light = "green"; g.dollTurning = -1;
+          g.light = "green"; g.lightElapsed = 0; g.dollTurning = -1;
           g.lightTimer = (d.greenMin + Math.random() * (d.greenMax - d.greenMin)) / scale;
           Sound.green(); g.fakeoutPending = false;
+          for (const r of g.racers) { if (r.ai) r.ai.pauseTimer = 0; }
         }
       }
       // Fake-out
@@ -528,20 +534,49 @@
     const watching = g.light === "red" && g.dollAngle > 0.72 && g.graceAfterRed <= 0 && !freeze;
     let humanEnded = false;
 
+    // ---- Physics the AI reasons about (like a smart human judging "can I stop in time?") ----
+    const kStop = (1 / Math.max(0.05, d.momentum)) * 4;               // deceleration rate
+    const watchTime = Math.max(0.72 / (d.turn * scale), d.grace / scale); // time from red until the doll can catch you
+    const stopFull = Math.log(d.speed / 0.6) / kStop;                 // time to brake from full speed to safe
+    const safeWindow = Math.max(0.12, (d.greenMin / scale) - stopFull - 0.05); // sprint-safe window after green starts
+    const safeSpeed = 0.6 * Math.exp(kStop * watchTime);              // top speed you can still brake from in time
+
     for (const r of g.racers) {
       if (r.finished || r.caught) { r.vel = 0; continue; }
       const isHuman = !r.isAI;
 
       // Decide running intent
-      if (isHuman) { /* set by input */ }
+      if (isHuman) { r.speedMul = 1; /* running set by input */ }
       else {
-        if (g.light === "green") r.running = true;
-        else { r.ai.reactTimer -= dt; if (r.ai.reactTimer <= 0) r.running = false; }
+        const ai = r.ai;
+        const spdBase = d.speed * ai.spd;
+        // Creep only as fast as they can still brake from; bolder players ride closer to the limit
+        const creepMul = Math.min(1, (safeSpeed / spdBase) * (0.66 + ai.bold * 0.26));
+        if (g.light === "green" && !freeze) {
+          if (g.lightElapsed < safeWindow) {
+            // Green just started — red can't come yet: sprint full speed
+            r.running = true; r.speedMul = 1;
+          } else if (ai.pauseTimer > 0) {
+            // taking a cautious breather
+            ai.pauseTimer -= dt; r.running = false; r.speedMul = 0;
+          } else {
+            // red could come any moment: creep at a brakeable speed
+            r.running = true; r.speedMul = creepMul;
+            // cautious players occasionally stop and wait; bold ones rarely do
+            if (Math.random() < dt * 0.7 * (1 - ai.bold)) ai.pauseTimer = 0.18 + Math.random() * 0.28;
+          }
+        } else if (g.light === "red") {
+          ai.reactTimer -= dt;
+          if (ai.reactTimer > 0) { r.running = true; r.speedMul = creepMul; } // gambler still creeping
+          else { r.running = false; r.speedMul = 0; }
+        } else {
+          r.running = false; r.speedMul = 0;
+        }
       }
 
       // Movement + momentum
       const spd = d.speed * (isHuman ? (dashing ? 1.8 : 1) : r.ai.spd);
-      const target = r.running ? spd : 0;
+      const target = r.running ? spd * r.speedMul : 0;
       const mom = (isHuman && ironGrip) ? 0.03 : d.momentum;
       const acc = r.running ? 8 : (1 / Math.max(0.05, mom)) * 4;
       r.vel += (target - r.vel) * Math.min(1, acc * dt);
