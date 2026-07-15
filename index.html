@@ -21,63 +21,30 @@
     font-family: "Trebuchet MS", "Segoe UI", system-ui, sans-serif;
     overflow: hidden;
   }
-  #app {
-    position: relative;
-    width: 100vw;
-    height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  canvas {
-    display: block;
-    background: #14141f;
-    max-width: 100%;
-    max-height: 100%;
-    box-shadow: 0 0 80px rgba(237, 27, 118, 0.3);
-  }
+  #app { position: relative; width: 100vw; height: 100vh; display: flex; align-items: center; justify-content: center; }
+  canvas { display: block; background: #14141f; max-width: 100%; max-height: 100%; box-shadow: 0 0 80px rgba(237, 27, 118, 0.3); }
 
   .overlay {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    background: rgba(6, 6, 10, 0.85);
-    backdrop-filter: blur(5px);
-    text-align: center;
-    padding: 24px;
-    z-index: 10;
+    position: absolute; inset: 0; display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    background: rgba(6, 6, 10, 0.85); backdrop-filter: blur(5px);
+    text-align: center; padding: 24px; z-index: 10;
   }
   .hidden { display: none !important; }
 
   .brand { display: flex; gap: 18px; align-items: center; margin-bottom: 8px; }
   .shape { width: 42px; height: 42px; border: 4px solid var(--pink); display: inline-block; }
   .shape.circle { border-radius: 50%; }
-  .shape.triangle {
-    width: 0; height: 0; border: none;
-    border-left: 24px solid transparent;
-    border-right: 24px solid transparent;
-    border-bottom: 42px solid var(--pink);
-  }
-  h1 {
-    font-size: clamp(28px, 6vw, 56px);
-    letter-spacing: 4px;
-    color: var(--pink);
-    text-shadow: 0 0 22px rgba(237,27,118,0.7);
-    margin-bottom: 6px;
-  }
+  .shape.triangle { width: 0; height: 0; border: none; border-left: 24px solid transparent; border-right: 24px solid transparent; border-bottom: 42px solid var(--pink); }
+  h1 { font-size: clamp(28px, 6vw, 56px); letter-spacing: 4px; color: var(--pink); text-shadow: 0 0 22px rgba(237,27,118,0.7); margin-bottom: 6px; }
   h2 { font-size: 20px; color: var(--teal-light); letter-spacing: 2px; margin-bottom: 20px; font-weight: normal; }
   p.tip { max-width: 480px; line-height: 1.6; color: #cbb9a3; margin-bottom: 22px; }
-  .big { font-size: clamp(40px, 9vw, 84px); margin: 10px 0; }
+  .big { font-size: clamp(36px, 8vw, 76px); margin: 6px 0; }
 
   button, .btn {
-    font-family: inherit; font-size: 18px; letter-spacing: 2px;
-    color: #fff; background: var(--pink); border: none;
-    padding: 14px 34px; border-radius: 40px; cursor: pointer;
-    transition: transform .12s, box-shadow .12s;
-    box-shadow: 0 6px 0 var(--pink-dark);
+    font-family: inherit; font-size: 18px; letter-spacing: 2px; color: #fff; background: var(--pink);
+    border: none; padding: 14px 34px; border-radius: 40px; cursor: pointer;
+    transition: transform .12s, box-shadow .12s; box-shadow: 0 6px 0 var(--pink-dark);
   }
   button:hover { transform: translateY(-2px); box-shadow: 0 8px 0 var(--pink-dark); }
   button:active { transform: translateY(4px); box-shadow: 0 2px 0 var(--pink-dark); }
@@ -85,58 +52,36 @@
   button.ghost:hover { background: rgba(22,193,184,0.12); }
 
   input {
-    font-family: inherit; font-size: 18px; text-align: center;
-    padding: 12px 16px; border-radius: 10px; border: 2px solid var(--teal);
-    background: #0d0d16; color: var(--cream); letter-spacing: 3px;
+    font-family: inherit; font-size: 18px; text-align: center; padding: 12px 16px; border-radius: 10px;
+    border: 2px solid var(--teal); background: #0d0d16; color: var(--cream); letter-spacing: 3px;
     text-transform: uppercase; width: 220px; margin-bottom: 18px;
   }
   input:focus { outline: none; border-color: var(--pink); }
 
   .char-label { color: #9a9aae; letter-spacing: 3px; font-size: 13px; margin-bottom: 10px; }
   .char-row { display: flex; gap: 10px; margin-bottom: 10px; flex-wrap: wrap; justify-content: center; max-width: 560px; }
-  .char-card {
-    width: 92px; padding: 10px 6px; border-radius: 12px; cursor: pointer;
-    background: #0d0d16; border: 2px solid #3a3a4a; transition: all .12s; text-align: center;
-  }
+  .char-card { width: 92px; padding: 10px 6px; border-radius: 12px; cursor: pointer; background: #0d0d16; border: 2px solid #3a3a4a; transition: all .12s; text-align: center; }
   .char-card:hover { border-color: var(--teal-light); transform: translateY(-2px); }
   .char-card.active { border-color: var(--pink); background: rgba(237,27,118,0.14); box-shadow: 0 0 18px rgba(237,27,118,0.3); }
   .char-card .num { font-size: 20px; font-weight: bold; letter-spacing: 1px; margin-bottom: 4px; }
   .char-card .cname { font-size: 10px; letter-spacing: .5px; color: #cbb9a3; line-height: 1.2; min-height: 24px; display: flex; align-items: center; justify-content: center; }
-  .char-skill {
-    min-height: 42px; max-width: 460px; margin-bottom: 18px; font-size: 14px; line-height: 1.5;
-    color: #cbb9a3; display: flex; align-items: center; justify-content: center;
-  }
+  .char-skill { min-height: 42px; max-width: 460px; margin-bottom: 18px; font-size: 14px; line-height: 1.5; color: #cbb9a3; display: flex; align-items: center; justify-content: center; }
   .char-skill b { color: var(--teal-light); letter-spacing: 1px; }
 
-  #skillBtn {
-    position: absolute; bottom: 46px; left: 50%; transform: translateX(-50%);
-    z-index: 6; font-size: 16px; letter-spacing: 2px; padding: 12px 28px;
-    border-radius: 40px; min-width: 220px; box-shadow: 0 5px 0 var(--pink-dark);
-  }
+  #skillBtn { position: absolute; bottom: 46px; left: 50%; transform: translateX(-50%); z-index: 6; font-size: 16px; letter-spacing: 2px; padding: 12px 28px; border-radius: 40px; min-width: 220px; box-shadow: 0 5px 0 var(--pink-dark); }
   #skillBtn:hover { transform: translateX(-50%) translateY(-2px); }
   #skillBtn:active { transform: translateX(-50%) translateY(3px); box-shadow: 0 2px 0 var(--pink-dark); }
   #skillBtn.cooling { background: #3a3a4a; box-shadow: 0 5px 0 #22222c; cursor: not-allowed; color: #8a8a9a; }
   #skillBtn.active-skill { background: var(--teal); box-shadow: 0 5px 0 #024f4b; color: #fff; }
+
   .diff-row { display: flex; gap: 10px; margin-bottom: 20px; }
-  .diff-btn {
-    font-family: inherit; font-size: 14px; letter-spacing: 1px;
-    padding: 9px 18px; border-radius: 30px; cursor: pointer;
-    background: transparent; border: 2px solid #4a4a5a; color: #9a9aae;
-    box-shadow: none; transition: all .12s;
-  }
+  .diff-btn { font-family: inherit; font-size: 14px; letter-spacing: 1px; padding: 9px 18px; border-radius: 30px; cursor: pointer; background: transparent; border: 2px solid #4a4a5a; color: #9a9aae; box-shadow: none; transition: all .12s; }
   .diff-btn.active { border-color: var(--pink); color: #fff; background: rgba(237,27,118,0.18); }
   .diff-btn:hover { border-color: var(--pink); transform: none; }
 
-  .board {
-    background: #0d0d16; border: 2px solid var(--teal); border-radius: 14px;
-    padding: 18px 22px; min-width: 320px; max-width: 90vw; margin-bottom: 22px;
-  }
+  .board { background: #0d0d16; border: 2px solid var(--teal); border-radius: 14px; padding: 18px 22px; min-width: 320px; max-width: 90vw; margin-bottom: 22px; }
   .board h3 { color: var(--teal-light); letter-spacing: 3px; margin-bottom: 12px; }
-  .row {
-    display: grid; grid-template-columns: 34px 1fr auto auto; gap: 10px;
-    padding: 7px 4px; border-bottom: 1px solid rgba(255,255,255,0.07);
-    align-items: center; font-size: 16px;
-  }
+  .row { display: grid; grid-template-columns: 34px 1fr auto auto; gap: 10px; padding: 7px 4px; border-bottom: 1px solid rgba(255,255,255,0.07); align-items: center; font-size: 16px; }
   .row:last-child { border-bottom: none; }
   .row .rank { color: var(--pink); font-weight: bold; }
   .row .name { text-align: left; letter-spacing: 1px; }
@@ -147,33 +92,17 @@
   .empty { color: #7d7d8f; padding: 16px; font-size: 14px; }
   .btn-row { display: flex; gap: 14px; flex-wrap: wrap; justify-content: center; }
 
-  #hud {
-    position: absolute; top: 16px; left: 0; right: 0;
-    display: flex; justify-content: space-between; padding: 0 22px;
-    pointer-events: none; z-index: 5; font-size: 18px; letter-spacing: 1px;
-  }
-  #hud .pill {
-    background: rgba(13,13,22,0.72); border: 1px solid rgba(255,255,255,0.12);
-    padding: 8px 16px; border-radius: 30px;
-  }
+  #hud { position: absolute; top: 16px; left: 0; right: 0; display: flex; justify-content: space-between; padding: 0 22px; pointer-events: none; z-index: 5; font-size: 18px; letter-spacing: 1px; }
+  #hud .pill { background: rgba(13,13,22,0.72); border: 1px solid rgba(255,255,255,0.12); padding: 8px 16px; border-radius: 30px; }
   #hud .val { color: var(--teal-light); font-variant-numeric: tabular-nums; }
   #hud .val.warn { color: var(--pink); }
-  #signal {
-    position: absolute; top: 62px; left: 50%; transform: translateX(-50%);
-    z-index: 5; font-size: 24px; letter-spacing: 4px; font-weight: bold;
-    padding: 6px 24px; border-radius: 30px; text-shadow: 0 0 12px currentColor;
-    transition: color .1s, background .1s;
-  }
-  #soundToggle {
-    position: absolute; top: 16px; left: 50%; transform: translateX(-50%);
-    z-index: 6; background: rgba(13,13,22,0.72); border: 1px solid rgba(255,255,255,0.12);
-    color: var(--cream); font-size: 16px; padding: 6px 12px; border-radius: 30px;
-    cursor: pointer; box-shadow: none; letter-spacing: 1px;
-  }
+  #signal { position: absolute; top: 62px; left: 50%; transform: translateX(-50%); z-index: 5; font-size: 24px; letter-spacing: 4px; font-weight: bold; padding: 6px 24px; border-radius: 30px; text-shadow: 0 0 12px currentColor; transition: color .1s, background .1s; }
+  #soundToggle { position: absolute; top: 16px; left: 50%; transform: translateX(-50%); z-index: 6; background: rgba(13,13,22,0.72); border: 1px solid rgba(255,255,255,0.12); color: var(--cream); font-size: 16px; padding: 6px 12px; border-radius: 30px; cursor: pointer; box-shadow: none; letter-spacing: 1px; }
   #soundToggle:hover { transform: translateX(-50%); }
-  .status-msg { margin-bottom: 16px; font-size: 20px; letter-spacing: 2px; }
+  .status-msg { margin-bottom: 12px; font-size: 22px; letter-spacing: 2px; }
   .win { color: var(--teal-light); }
   .lose { color: var(--pink); }
+  .place { font-size: 15px; color: #cbb9a3; letter-spacing: 1px; margin-bottom: 8px; }
   .footer-tip { position: absolute; bottom: 14px; left: 0; right: 0; text-align: center; color: #6a6a7d; font-size: 13px; z-index: 5; }
 </style>
 </head>
@@ -189,7 +118,7 @@
   <button id="skillBtn" class="hidden">SKILL</button>
   <button id="soundToggle" class="hidden">🔊</button>
   <div id="signal" class="hidden"></div>
-  <div class="footer-tip hidden" id="footerTip">Hold <b>SPACE</b> / <b>↑</b> to run • Release early — you keep sliding! • Press <b>E</b> or the button to use your skill</div>
+  <div class="footer-tip hidden" id="footerTip">Hold <b>SPACE</b> / <b>↑</b> to run • Release early — you keep sliding! • Press <b>E</b> for your skill • Beat the 4 AI to the line</div>
 
   <div class="overlay" id="startScreen">
     <div class="brand">
@@ -199,9 +128,9 @@
     </div>
     <h1>SQUID GAME</h1>
     <h2>RED LIGHT · GREEN LIGHT</h2>
-    <p class="tip">Move only on <b style="color:var(--teal-light)">GREEN LIGHT</b>. Freeze on <b style="color:var(--pink)">RED LIGHT</b> — if the doll catches you moving, you're eliminated. You carry <b>momentum</b>, so stop early! Beware fake-outs. Reach the finish before time runs out.</p>
+    <p class="tip">Race <b style="color:#fff">4 AI players</b> to the finish. Move only on <b style="color:var(--teal-light)">GREEN LIGHT</b>, freeze on <b style="color:var(--pink)">RED LIGHT</b> — the doll eliminates anyone it catches moving. You carry <b>momentum</b>, so stop early. First across the line wins!</p>
     <input id="nameInput" maxlength="12" placeholder="YOUR NAME" />
-    <div class="char-label">CHOOSE YOUR PLAYER</div>
+    <div class="char-label">CHOOSE YOUR PLAYER — the other 4 become your AI rivals</div>
     <div class="char-row" id="charRow"></div>
     <div class="char-skill" id="charSkill"></div>
     <div class="diff-row" id="diffRow">
@@ -218,6 +147,7 @@
 
   <div class="overlay hidden" id="endScreen">
     <div class="status-msg" id="endMsg"></div>
+    <div class="place" id="endPlace"></div>
     <div class="big" id="endScore">0</div>
     <div class="board" id="boardEnd"></div>
     <div class="btn-row">
@@ -244,9 +174,17 @@
   const ctx = canvas.getContext("2d");
   const W = canvas.width, H = canvas.height;
 
-  // ==================== SOUND ENGINE (Web Audio, synthesized) ====================
+  // Track geometry & lanes (feet Y + draw scale per lane; lane 0 = front/human)
+  const GROUND_Y = H * 0.62;
+  const FINISH_X = W - 90;
+  const LANE_Y = [GROUND_Y + 150, GROUND_Y + 118, GROUND_Y + 90, GROUND_Y + 64, GROUND_Y + 42];
+  const LANE_S = [1.06, 0.98, 0.9, 0.84, 0.8];
+  const TRACK_LEN = 100;
+  function racerX(r) { return 92 + (FINISH_X - 130) * (r.dist / TRACK_LEN); }
+
+  // ==================== SOUND ENGINE ====================
   const Sound = {
-    ctx: null, enabled: true, master: null, songTimer: 0, songStep: 0,
+    ctx: null, enabled: true, master: null, songStep: 0,
     init() {
       if (this.ctx) return;
       try {
@@ -260,10 +198,8 @@
     tone(freq, dur, type = "sine", vol = 0.5, when = 0, slideTo = null) {
       if (!this.enabled || !this.ctx) return;
       const t0 = this.ctx.currentTime + when;
-      const osc = this.ctx.createOscillator();
-      const g = this.ctx.createGain();
-      osc.type = type;
-      osc.frequency.setValueAtTime(freq, t0);
+      const osc = this.ctx.createOscillator(), g = this.ctx.createGain();
+      osc.type = type; osc.frequency.setValueAtTime(freq, t0);
       if (slideTo) osc.frequency.exponentialRampToValueAtTime(slideTo, t0 + dur);
       g.gain.setValueAtTime(0.0001, t0);
       g.gain.exponentialRampToValueAtTime(vol, t0 + 0.01);
@@ -287,19 +223,13 @@
     green() { this.tone(523, 0.12, "triangle", 0.4); this.tone(784, 0.18, "triangle", 0.35, 0.1); },
     red()   { this.tone(392, 0.25, "sawtooth", 0.4, 0, 220); },
     step(fast) { this.noise(0.06, fast ? 0.18 : 0.12, 0, 500); },
-    gunshot() {
-      this.noise(0.3, 0.9, 0, 1800);
-      this.tone(90, 0.25, "square", 0.6, 0, 40);
-    },
-    win() {
-      [523, 659, 784, 1047].forEach((f, i) => this.tone(f, 0.3, "triangle", 0.4, i * 0.12));
-    },
+    gunshot() { this.noise(0.3, 0.9, 0, 1800); this.tone(90, 0.25, "square", 0.6, 0, 40); },
+    aiShot() { this.noise(0.18, 0.4, 0, 1400); this.tone(80, 0.14, "square", 0.28, 0, 40); },
+    win() { [523, 659, 784, 1047].forEach((f, i) => this.tone(f, 0.3, "triangle", 0.4, i * 0.12)); },
     tick() { this.tone(1200, 0.05, "square", 0.25); },
-    // The doll's eerie "mugunghwa" melody note, advanced each call
     songNote() {
       const notes = [392, 392, 440, 440, 392, 392, 330, 392, 392, 330, 330, 294];
-      const f = notes[this.songStep % notes.length];
-      this.songStep++;
+      const f = notes[this.songStep % notes.length]; this.songStep++;
       this.tone(f, 0.22, "sine", 0.18);
     },
   };
@@ -313,64 +243,42 @@
   };
   let difficulty = "normal";
 
-  // ==================== CHARACTERS (real Squid Game cast) & SKILLS ====================
-  // Each has ONE unique active skill. Skills run for `dur` seconds, then a 5s cooldown.
+  // ==================== CHARACTERS & SKILLS ====================
   const SKILL_COOLDOWN = 5;
   const CHARACTERS = {
-    gihun: {
-      no: "456", name: "SEONG GI-HUN", color: "#0a9a94", hair: "#3a2a1a",
-      skill: "LUCKY BREAK", dur: 0, // instant
-      desc: "Fortune smiles — instantly gain +5 seconds on the clock.",
-    },
-    saebyeok: {
-      no: "067", name: "KANG SAE-BYEOK", color: "#2c6fd6", hair: "#141414",
-      skill: "DASH", dur: 2,
-      desc: "The nimble defector sprints — +80% speed for 2 seconds.",
-    },
-    sangwoo: {
-      no: "218", name: "CHO SANG-WOO", color: "#6a4fbf", hair: "#1a1a1a",
-      skill: "FORESIGHT", dur: 3,
-      desc: "The strategist reads the pattern — see the exact light timer for 3s.",
-    },
-    ali: {
-      no: "199", name: "ALI ABDUL", color: "#c77c2e", hair: "#241610",
-      skill: "IRON GRIP", dur: 3,
-      desc: "Rock-solid footing — no momentum, you stop instantly for 3s.",
-    },
-    ilnam: {
-      no: "001", name: "OH IL-NAM", color: "#7a8a5a", hair: "#d8d8d8",
-      skill: "TIME OF INNOCENCE", dur: 2.5,
-      desc: "The old man freezes the doll — run safely for 2.5 seconds.",
-    },
+    gihun:    { no: "456", name: "SEONG GI-HUN", short: "GI-HUN", color: "#0a9a94", hair: "#3a2a1a", skill: "LUCKY BREAK", dur: 0,   desc: "Fortune smiles — instantly gain +5 seconds on the clock." },
+    saebyeok: { no: "067", name: "KANG SAE-BYEOK", short: "SAE-BYEOK", color: "#2c6fd6", hair: "#141414", skill: "DASH", dur: 2,   desc: "The nimble defector sprints — +80% speed for 2 seconds." },
+    sangwoo:  { no: "218", name: "CHO SANG-WOO", short: "SANG-WOO", color: "#6a4fbf", hair: "#1a1a1a", skill: "FORESIGHT", dur: 3, desc: "The strategist reads the pattern — see the exact light timer for 3s." },
+    ali:      { no: "199", name: "ALI ABDUL", short: "ALI", color: "#c77c2e", hair: "#241610", skill: "IRON GRIP", dur: 3,       desc: "Rock-solid footing — no momentum, you stop instantly for 3s." },
+    ilnam:    { no: "001", name: "OH IL-NAM", short: "IL-NAM", color: "#7a8a5a", hair: "#d8d8d8", skill: "TIME OF INNOCENCE", dur: 2.5, desc: "The old man freezes the doll — everyone else stalls, you run 2.5s." },
   };
   let character = "gihun";
+
+  // AI personality per character (reaction = how long they keep moving into red; risk = gamble chance; spd = pace)
+  const AI_PROFILES = {
+    gihun:    { react: 0.14, risk: 0.16, spd: 1.00 },
+    saebyeok: { react: 0.09, risk: 0.10, spd: 1.05 },
+    sangwoo:  { react: 0.10, risk: 0.06, spd: 0.99 },
+    ali:      { react: 0.18, risk: 0.14, spd: 0.97 },
+    ilnam:    { react: 0.24, risk: 0.26, spd: 0.91 },
+  };
 
   // ==================== LEADERBOARD ====================
   const LS_KEY = "squidgame_rlgl_scores_v2";
   function loadScores() {
     let raw;
     try { raw = JSON.parse(localStorage.getItem(LS_KEY)) || []; } catch { return []; }
-    // Collapse any legacy duplicates: keep the highest score per name
     const byName = new Map();
-    for (const s of raw) {
-      const prev = byName.get(s.name);
-      if (!prev || s.score > prev.score) byName.set(s.name, s);
-    }
+    for (const s of raw) { const prev = byName.get(s.name); if (!prev || s.score > prev.score) byName.set(s.name, s); }
     return [...byName.values()].sort((a, b) => b.score - a.score);
   }
   function saveScore(name, score, diff) {
     const scores = loadScores();
     const cleanName = (name || "PLAYER").toUpperCase().slice(0, 12);
-    // Keep only the highest score per user (dedupe by name)
     const existing = scores.find(s => s.name === cleanName);
     let entry;
-    if (existing) {
-      entry = existing;
-      if (score > existing.score) { existing.score = score; existing.diff = diff; existing.t = Date.now(); }
-    } else {
-      entry = { name: cleanName, score, diff, t: Date.now() };
-      scores.push(entry);
-    }
+    if (existing) { entry = existing; if (score > existing.score) { existing.score = score; existing.diff = diff; existing.t = Date.now(); } }
+    else { entry = { name: cleanName, score, diff, t: Date.now() }; scores.push(entry); }
     scores.sort((a, b) => b.score - a.score);
     const trimmed = scores.slice(0, 10);
     localStorage.setItem(LS_KEY, JSON.stringify(trimmed));
@@ -392,44 +300,46 @@
   // ==================== STATE ====================
   const GameState = { MENU: 0, PLAYING: 1, ENDED: 2 };
   let state = GameState.MENU;
-  const TRACK_LEN = 100;
   let game = null, playerName = "";
 
-  // Static decoration generated once (deterministic-ish)
-  const stars = Array.from({ length: 70 }, (_, i) => ({
-    x: (i * 137.5) % W, y: (i * 89.3) % (H * 0.55), r: (i % 3) * 0.6 + 0.5, tw: (i % 7) * 0.9
-  }));
+  const stars = Array.from({ length: 70 }, (_, i) => ({ x: (i * 137.5) % W, y: (i * 89.3) % (H * 0.55), r: (i % 3) * 0.6 + 0.5, tw: (i % 7) * 0.9 }));
+
+  function makeRacer(key, isAI, laneIndex) {
+    const r = {
+      key, isAI, laneIndex, dist: 0, vel: 0, running: false,
+      runPhase: laneIndex * 1.7, caught: false, finished: false, rank: 0, footTimer: 0,
+    };
+    if (isAI) { const p = AI_PROFILES[key]; r.ai = { react: p.react, risk: p.risk, spd: p.spd, reactTimer: 0 }; }
+    return r;
+  }
 
   function newGame() {
     const d = DIFF[difficulty];
+    const allKeys = Object.keys(CHARACTERS);
+    const aiKeys = allKeys.filter(k => k !== character);
+    const racers = [makeRacer(character, false, 0)];
+    aiKeys.forEach((k, i) => racers.push(makeRacer(k, true, i + 1)));
     return {
-      dist: 0, vel: 0, time: d.time, maxTime: d.time,
-      running: false, light: "green",
-      lightTimer: 2.2, dollAngle: 0, dollTurning: 0,
-      graceAfterRed: 0, runPhase: 0, caught: false, won: false,
-      shake: 0, fakeoutPending: false, warnPulse: 0,
+      racers, human: racers[0], finishOrder: [],
+      time: d.time, maxTime: d.time,
+      light: "green", lightTimer: 2.2, dollAngle: 0, dollTurning: 0,
+      graceAfterRed: 0, caught: false, won: false, humanRank: 0,
+      shake: 0, fakeoutPending: false, fakeSnap: null, warnPulse: 0,
       clouds: [{ x: 120, y: 80, s: 1 }, { x: 520, y: 130, s: 0.7 }, { x: 760, y: 70, s: 0.9 }],
-      particles: [], footTimer: 0, stepToggle: false, time2: 0,
-      // Skill: dur = seconds skill is active, cd = seconds until usable again
+      particles: [], time2: 0, songTimerLocal: 0,
       skillDur: 0, skillCd: 0, skillFx: 0,
     };
   }
-
-  function difScale(g) {
-    // ramps 0 -> ramp as you progress
-    return 1 + DIFF[difficulty].ramp * (g.dist / TRACK_LEN);
-  }
+  function difScale(g) { return 1 + DIFF[difficulty].ramp * (g.human.dist / TRACK_LEN); }
 
   // ==================== INPUT ====================
   const keys = new Set();
-  function setRunning(v) { if (game) game.running = v; }
+  function setRunning(v) { if (game && game.human) game.human.running = v; }
   window.addEventListener("keydown", (e) => {
     if (["Space", "ArrowUp", "KeyW"].includes(e.code)) { e.preventDefault(); Sound.resume(); keys.add(e.code); setRunning(true); }
     if (e.code === "KeyE") { e.preventDefault(); activateSkill(); }
   });
-  window.addEventListener("keyup", (e) => {
-    if (["Space", "ArrowUp", "KeyW"].includes(e.code)) { keys.delete(e.code); if (keys.size === 0) setRunning(false); }
-  });
+  window.addEventListener("keyup", (e) => { if (["Space", "ArrowUp", "KeyW"].includes(e.code)) { keys.delete(e.code); if (keys.size === 0) setRunning(false); } });
   const holdStart = (e) => { if (state === GameState.PLAYING) { e.preventDefault(); Sound.resume(); setRunning(true); } };
   const holdEnd = () => setRunning(false);
   canvas.addEventListener("pointerdown", holdStart);
@@ -449,27 +359,20 @@
   const timeVal = document.getElementById("timeVal");
   const skillBtn = document.getElementById("skillBtn");
 
-  // ==================== SKILL ACTIVATION ====================
   function activateSkill() {
     if (state !== GameState.PLAYING || !game) return;
     const g = game;
-    if (g.skillDur > 0 || g.skillCd > 0) return; // active or cooling down
+    if (g.skillDur > 0 || g.skillCd > 0) return;
     const c = CHARACTERS[character];
     g.skillDur = c.dur;
-    g.skillCd = c.dur + SKILL_COOLDOWN; // 5s cooldown AFTER the skill ends
+    g.skillCd = c.dur + SKILL_COOLDOWN;
     g.skillFx = 0.6;
     Sound.tone(660, 0.15, "triangle", 0.4);
     Sound.tone(990, 0.2, "triangle", 0.35, 0.08);
-
-    // Instant-effect skills apply immediately
-    if (character === "gihun") {
-      g.time = Math.min(g.maxTime + 20, g.time + 5); // +5 seconds
-      Sound.tone(1320, 0.2, "sine", 0.3, 0.16);
-    }
+    if (character === "gihun") { g.time = Math.min(g.maxTime + 20, g.time + 5); Sound.tone(1320, 0.2, "sine", 0.3, 0.16); }
   }
   skillBtn.addEventListener("click", (e) => { e.preventDefault(); Sound.resume(); activateSkill(); });
 
-  // Build character cards
   const charRow = document.getElementById("charRow");
   const charSkillEl = document.getElementById("charSkill");
   function renderCharCards() {
@@ -483,10 +386,7 @@
     });
     updateCharSkill();
   }
-  function updateCharSkill() {
-    const c = CHARACTERS[character];
-    charSkillEl.innerHTML = `<span><b>${c.skill}</b> — ${c.desc}</span>`;
-  }
+  function updateCharSkill() { const c = CHARACTERS[character]; charSkillEl.innerHTML = `<span><b>${c.skill}</b> — ${c.desc}</span>`; }
   charRow.addEventListener("click", (e) => {
     const card = e.target.closest(".char-card"); if (!card) return;
     character = card.dataset.key;
@@ -504,16 +404,10 @@
   nameInput.addEventListener("keydown", (e) => { if (e.key === "Enter") startGame(); });
   document.getElementById("viewBoardBtn").addEventListener("click", () => { renderBoard(document.getElementById("boardMain")); show(boardScreen); });
   document.getElementById("backBtn").addEventListener("click", () => show(startScreen));
-  document.getElementById("clearBtn").addEventListener("click", () => {
-    if (confirm("Clear all leaderboard scores?")) { localStorage.removeItem(LS_KEY); renderBoard(document.getElementById("boardMain")); updateBest(); }
-  });
+  document.getElementById("clearBtn").addEventListener("click", () => { if (confirm("Clear all leaderboard scores?")) { localStorage.removeItem(LS_KEY); renderBoard(document.getElementById("boardMain")); updateBest(); } });
   document.getElementById("againBtn").addEventListener("click", startGame);
   document.getElementById("menuBtn").addEventListener("click", () => show(startScreen));
-  soundToggle.addEventListener("click", () => {
-    Sound.enabled = !Sound.enabled;
-    soundToggle.textContent = Sound.enabled ? "🔊" : "🔇";
-    if (Sound.master) Sound.master.gain.value = Sound.enabled ? 0.35 : 0;
-  });
+  soundToggle.addEventListener("click", () => { Sound.enabled = !Sound.enabled; soundToggle.textContent = Sound.enabled ? "🔊" : "🔇"; if (Sound.master) Sound.master.gain.value = Sound.enabled ? 0.35 : 0; });
 
   function show(screen) {
     [startScreen, endScreen, boardScreen].forEach(s => s.classList.add("hidden"));
@@ -537,52 +431,54 @@
     lastT = performance.now();
   }
 
-  function endGame() {
+  function ordinal(n) { return ["1st", "2nd", "3rd", "4th", "5th"][n - 1] || (n + "th"); }
+
+  function endGame(won) {
     if (state === GameState.ENDED) return;
     state = GameState.ENDED;
-    if (game.won) Sound.win(); else Sound.gunshot();
-    const d = DIFF[difficulty];
-    const multipliers = { easy: 1, normal: 1.5, hard: 2.2, nightmare: 3.2 };
-    const mult = multipliers[difficulty];
-    let score = 0;
-    if (game.won) score = Math.round((1000 + game.time * 120 + game.time * game.time * 4) * mult);
-    else score = Math.round(game.dist * 8 * mult);
+    const g = game;
+    g.won = won;
+    // Determine human placement
+    let rank;
+    if (won) rank = g.human.rank;
+    else rank = g.finishOrder.length + 1; // finished behind everyone who crossed
+    g.humanRank = rank;
+
+    if (won) Sound.win(); else Sound.gunshot();
+    const mult = { easy: 1, normal: 1.5, hard: 2.2, nightmare: 3.2 }[difficulty];
+    let score;
+    if (won) { const placeBonus = (5 - rank) * 350; score = Math.round((1000 + g.time * 120 + placeBonus) * mult); }
+    else score = Math.round(g.human.dist * 8 * mult);
 
     const { entry } = saveScore(playerName, score, difficulty);
     updateBest();
-    document.getElementById("endMsg").innerHTML = game.won ? `<span class="win">✓ YOU SURVIVED</span>` : `<span class="lose">✕ ELIMINATED</span>`;
+
+    document.getElementById("endMsg").innerHTML = won ? `<span class="win">✓ YOU SURVIVED</span>` : `<span class="lose">✕ ELIMINATED</span>`;
+    const survivors = g.finishOrder.length;
+    document.getElementById("endPlace").textContent = won
+      ? `${ordinal(rank)} place across the line` + (rank === 1 ? " — WINNER!" : "")
+      : `You reached ${Math.floor(g.human.dist)}% • ${survivors} racer${survivors === 1 ? "" : "s"} made it`;
     document.getElementById("endScore").textContent = score.toLocaleString();
     renderBoard(document.getElementById("boardEnd"), entry);
-    // delay end screen slightly so gunshot/animation reads
-    setTimeout(() => show(endScreen), game.won ? 600 : 850);
+    setTimeout(() => show(endScreen), won ? 600 : 850);
   }
 
   // ==================== PARTICLES ====================
-  function spawnDust(g, x, y) {
-    for (let i = 0; i < 3; i++)
-      g.particles.push({ x, y, vx: -20 - Math.random() * 30, vy: -Math.random() * 30, life: 0.5, max: 0.5, r: 2 + Math.random() * 2, c: "sand" });
-  }
-  function spawnBlood(g, x, y) {
-    for (let i = 0; i < 24; i++) {
-      const a = Math.random() * Math.PI * 2, sp = 60 + Math.random() * 180;
-      g.particles.push({ x, y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - 40, life: 0.8, max: 0.8, r: 2 + Math.random() * 3, c: "blood" });
-    }
-  }
+  function spawnDust(g, x, y) { for (let i = 0; i < 3; i++) g.particles.push({ x, y, vx: -20 - Math.random() * 30, vy: -Math.random() * 30, life: 0.5, max: 0.5, r: 2 + Math.random() * 2, c: "sand" }); }
+  function spawnBlood(g, x, y) { for (let i = 0; i < 22; i++) { const a = Math.random() * Math.PI * 2, sp = 60 + Math.random() * 180; g.particles.push({ x, y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - 40, life: 0.8, max: 0.8, r: 2 + Math.random() * 3, c: "blood" }); } }
 
   // ==================== UPDATE ====================
   function update(dt) {
     if (state !== GameState.PLAYING) return;
-    const g = game;
-    const d = DIFF[difficulty];
-    const scale = difScale(g);
+    const g = game, d = DIFF[difficulty], scale = difScale(g);
     g.time2 += dt;
 
-    // ---- Skill timers ----
+    // Skill timers
     if (g.skillDur > 0) g.skillDur = Math.max(0, g.skillDur - dt);
     if (g.skillCd > 0) g.skillCd = Math.max(0, g.skillCd - dt);
     if (g.skillFx > 0) g.skillFx = Math.max(0, g.skillFx - dt);
     const skillActive = g.skillDur > 0;
-    const freeze = skillActive && character === "ilnam";   // doll frozen, safe to run
+    const freeze = skillActive && character === "ilnam";
     const dashing = skillActive && character === "saebyeok";
     const ironGrip = skillActive && character === "ali";
     const foresight = skillActive && character === "sangwoo";
@@ -591,116 +487,113 @@
     const prevTime = g.time;
     g.time -= dt;
     if (Math.ceil(prevTime) !== Math.ceil(g.time) && g.time <= 10 && g.time > 0) Sound.tick();
-    if (g.time <= 0) { g.time = 0; g.caught = true; g.won = false; g.shake = 0.6; spawnBlood(g, playerX(g), playerY() - 20); return endGame(); }
+    if (g.time <= 0) { g.time = 0; g.human.caught = true; g.shake = 0.6; spawnBlood(g, racerX(g.human), LANE_Y[0] - 30); return endGame(false); }
 
-    // Doll's song plays through green light
-    if (g.light === "green") {
-      g.songTimerLocal = (g.songTimerLocal || 0) - dt;
-      if (g.songTimerLocal <= 0) { Sound.songNote(); g.songTimerLocal = 0.28; }
-    }
+    // Doll's song during green
+    if (g.light === "green") { g.songTimerLocal -= dt; if (g.songTimerLocal <= 0) { Sound.songNote(); g.songTimerLocal = 0.28; } }
 
     // Light cycle (frozen by Il-nam's skill)
     if (!freeze) {
-    g.lightTimer -= dt;
-    if (g.lightTimer <= 0) {
-      if (g.light === "green") {
-        g.light = "red"; g.dollTurning = 1; g.graceAfterRed = d.grace / scale;
-        g.lightTimer = (d.redMin + Math.random() * (d.redMax - d.redMin));
-        Sound.red();
-        // schedule a possible fake-out: doll briefly turns back then snaps
-        g.fakeoutPending = Math.random() < d.fakeout;
-      } else {
-        g.light = "green"; g.dollTurning = -1;
-        g.lightTimer = (d.greenMin + Math.random() * (d.greenMax - d.greenMin)) / scale;
-        Sound.green();
-        g.fakeoutPending = false;
+      g.lightTimer -= dt;
+      if (g.lightTimer <= 0) {
+        if (g.light === "green") {
+          g.light = "red"; g.dollTurning = 1; g.graceAfterRed = d.grace / scale;
+          g.lightTimer = (d.redMin + Math.random() * (d.redMax - d.redMin));
+          Sound.red();
+          g.fakeoutPending = Math.random() < d.fakeout;
+          // AI decides how long it will keep moving into this red phase
+          for (const r of g.racers) {
+            if (!r.ai) continue;
+            const gamble = Math.random() < r.ai.risk;
+            r.ai.reactTimer = r.ai.react + (gamble ? 0.35 + Math.random() * 0.4 : Math.random() * 0.06);
+          }
+        } else {
+          g.light = "green"; g.dollTurning = -1;
+          g.lightTimer = (d.greenMin + Math.random() * (d.greenMax - d.greenMin)) / scale;
+          Sound.green(); g.fakeoutPending = false;
+        }
+      }
+      // Fake-out
+      if (g.light === "red" && g.fakeoutPending && g.dollAngle >= 1 && g.lightTimer > 0.8 && Math.random() < dt * 1.5) {
+        g.fakeoutPending = false; g.dollTurning = -1; g.fakeSnap = 0.35;
+      }
+      if (g.fakeSnap != null) { g.fakeSnap -= dt; if (g.fakeSnap <= 0) { g.fakeSnap = null; g.dollTurning = 1; g.graceAfterRed = d.grace * 0.4 / scale; Sound.red(); } }
+      // Doll head turn
+      const turnSp = d.turn * scale;
+      if (g.dollTurning > 0) { g.dollAngle = Math.min(1, g.dollAngle + dt * turnSp); if (g.dollAngle >= 1) g.dollTurning = 0; }
+      else if (g.dollTurning < 0) { g.dollAngle = Math.max(0, g.dollAngle - dt * turnSp); if (g.dollAngle <= 0) g.dollTurning = 0; }
+      if (g.graceAfterRed > 0) g.graceAfterRed -= dt;
+    }
+
+    const watching = g.light === "red" && g.dollAngle > 0.72 && g.graceAfterRed <= 0 && !freeze;
+    let humanEnded = false;
+
+    for (const r of g.racers) {
+      if (r.finished || r.caught) { r.vel = 0; continue; }
+      const isHuman = !r.isAI;
+
+      // Decide running intent
+      if (isHuman) { /* set by input */ }
+      else {
+        if (g.light === "green") r.running = true;
+        else { r.ai.reactTimer -= dt; if (r.ai.reactTimer <= 0) r.running = false; }
+      }
+
+      // Movement + momentum
+      const spd = d.speed * (isHuman ? (dashing ? 1.8 : 1) : r.ai.spd);
+      const target = r.running ? spd : 0;
+      const mom = (isHuman && ironGrip) ? 0.03 : d.momentum;
+      const acc = r.running ? 8 : (1 / Math.max(0.05, mom)) * 4;
+      r.vel += (target - r.vel) * Math.min(1, acc * dt);
+      if (Math.abs(r.vel) < 0.15) r.vel = 0;
+      if (r.vel > 0) {
+        r.dist = Math.min(TRACK_LEN, r.dist + r.vel * dt);
+        r.runPhase += dt * (8 + r.vel * 0.4);
+        if (isHuman) { r.footTimer -= dt; if (r.footTimer <= 0) { Sound.step(r.vel > spd * 0.6); r.footTimer = 0.26; spawnDust(g, racerX(r) - 8, LANE_Y[r.laneIndex]); } }
+      }
+
+      // Caught?
+      if (watching && r.vel > 0.6) {
+        r.caught = true; r.vel = 0;
+        spawnBlood(g, racerX(r), LANE_Y[r.laneIndex] - 34 * LANE_S[r.laneIndex]);
+        if (isHuman) { g.shake = 0.7; humanEnded = true; }
+        else Sound.aiShot();
+        if (isHuman) break;
+        continue;
+      }
+
+      // Finished?
+      if (r.dist >= TRACK_LEN) {
+        r.finished = true; g.finishOrder.push(r.key); r.rank = g.finishOrder.length;
+        if (isHuman) { humanEnded = true; break; }
       }
     }
 
-    // Fake-out: during red, occasionally the doll pretends to turn away then snaps back
-    if (g.light === "red" && g.fakeoutPending && g.dollAngle >= 1 && g.lightTimer > 0.8 && Math.random() < dt * 1.5) {
-      g.fakeoutPending = false;
-      g.dollTurning = -1; // start turning away...
-      g.fakeSnap = 0.35;  // ...but snap back quickly
-    }
-    if (g.fakeSnap != null) {
-      g.fakeSnap -= dt;
-      if (g.fakeSnap <= 0) { g.fakeSnap = null; g.dollTurning = 1; g.graceAfterRed = d.grace * 0.4 / scale; Sound.red(); }
-    }
-
-    // Doll head turn
-    const turnSp = d.turn * scale;
-    if (g.dollTurning > 0) { g.dollAngle = Math.min(1, g.dollAngle + dt * turnSp); if (g.dollAngle >= 1) g.dollTurning = 0; }
-    else if (g.dollTurning < 0) { g.dollAngle = Math.max(0, g.dollAngle - dt * turnSp); if (g.dollAngle <= 0) g.dollTurning = 0; }
-    if (g.graceAfterRed > 0) g.graceAfterRed -= dt;
-    } // end if(!freeze)
-
-    // Movement with momentum (Sae-byeok dashes faster, Ali cancels momentum)
-    const speedNow = d.speed * (dashing ? 1.8 : 1);
-    const targetVel = g.running ? speedNow : 0;
-    const momentumNow = ironGrip ? 0.03 : d.momentum;
-    const accel = g.running ? 8 : (1 / Math.max(0.05, momentumNow)) * 4;
-    g.vel += (targetVel - g.vel) * Math.min(1, accel * dt);
-    if (Math.abs(g.vel) < 0.15) g.vel = 0;
-    if (g.vel > 0) {
-      g.dist = Math.min(TRACK_LEN, g.dist + g.vel * dt);
-      g.runPhase += dt * (8 + g.vel * 0.4);
-      // footstep sounds & dust
-      g.footTimer -= dt;
-      if (g.footTimer <= 0) { Sound.step(g.vel > speedNow * 0.6); g.stepToggle = !g.stepToggle; g.footTimer = 0.26; spawnDust(g, playerX(g) - 8, playerY() + 40); }
-    }
-
-    // Caught check — moving while doll watching (uses actual velocity, so momentum kills you)
-    const watching = g.light === "red" && g.dollAngle > 0.72 && g.graceAfterRed <= 0 && !freeze;
-    if (watching && g.vel > 0.6) {
-      g.caught = true; g.won = false; g.shake = 0.7;
-      spawnBlood(g, playerX(g), playerY() - 20);
-      g.vel = 0;
-      return endGame();
-    }
-    // Warning pulse when watching and still sliding
-    g.warnPulse = (watching && g.vel > 0.1) ? Math.min(1, g.warnPulse + dt * 6) : Math.max(0, g.warnPulse - dt * 4);
-
-    // Win
-    if (g.dist >= TRACK_LEN) { g.won = true; return endGame(); }
+    if (humanEnded) { return endGame(!g.human.caught && g.human.finished); }
 
     // Particles
     for (const p of g.particles) { p.x += p.vx * dt; p.y += p.vy * dt; p.vy += 260 * dt; p.life -= dt; }
     g.particles = g.particles.filter(p => p.life > 0);
-
     g.clouds.forEach(c => { c.x += dt * 6 * c.s; if (c.x > W + 80) c.x = -80; });
     if (g.shake > 0) g.shake = Math.max(0, g.shake - dt);
+
+    const humanWatchedSliding = watching && g.human.vel > 0.1 && !g.human.finished;
+    g.warnPulse = humanWatchedSliding ? Math.min(1, g.warnPulse + dt * 6) : Math.max(0, g.warnPulse - dt * 4);
 
     // HUD
     timeVal.textContent = Math.ceil(g.time);
     timeVal.classList.toggle("warn", g.time <= 10);
-    document.getElementById("distVal").textContent = Math.floor(g.dist);
+    document.getElementById("distVal").textContent = Math.floor(g.human.dist);
     const baseLabel = freeze ? "FROZEN" : (g.light === "green" ? "GREEN LIGHT" : "RED LIGHT");
-    // Foresight (Sang-woo) reveals the exact countdown to the next switch
     signalEl.textContent = foresight ? `${baseLabel} (${g.lightTimer.toFixed(1)}s)` : baseLabel;
-    const col = freeze ? "#c9a0ff" : (g.light === "green" ? "#16c1b8" : "#ed1b76");
-    signalEl.style.color = col;
+    signalEl.style.color = freeze ? "#c9a0ff" : (g.light === "green" ? "#16c1b8" : "#ed1b76");
     signalEl.style.background = freeze ? "rgba(140,90,220,0.25)" : (g.light === "green" ? "rgba(3,122,118,0.25)" : "rgba(237,27,118,0.2)");
 
-    // Skill button state
     const c = CHARACTERS[character];
-    if (g.skillDur > 0) {
-      skillBtn.textContent = `${c.skill} ${g.skillDur.toFixed(1)}s`;
-      skillBtn.className = "active-skill";
-    } else if (g.skillCd > 0) {
-      skillBtn.textContent = `COOLDOWN ${g.skillCd.toFixed(1)}s`;
-      skillBtn.className = "cooling";
-    } else {
-      skillBtn.textContent = `${c.skill}  [E]`;
-      skillBtn.className = "";
-    }
+    if (g.skillDur > 0) { skillBtn.textContent = `${c.skill} ${g.skillDur.toFixed(1)}s`; skillBtn.className = "active-skill"; }
+    else if (g.skillCd > 0) { skillBtn.textContent = `COOLDOWN ${g.skillCd.toFixed(1)}s`; skillBtn.className = "cooling"; }
+    else { skillBtn.textContent = `${c.skill}  [E]`; skillBtn.className = ""; }
   }
-
-  // Positions
-  const GROUND_Y = H * 0.62;
-  const FINISH_X = W - 90;
-  function playerX(g) { return 92 + (FINISH_X - 130) * (g.dist / TRACK_LEN); }
-  function playerY() { return GROUND_Y + 40; }
 
   // ==================== RENDER ====================
   function draw() {
@@ -708,70 +601,52 @@
     ctx.save();
     if (g && g.shake > 0) { const s = g.shake * 16; ctx.translate((Math.random() - 0.5) * s, (Math.random() - 0.5) * s); }
 
-    // Sky
     const sky = ctx.createLinearGradient(0, 0, 0, GROUND_Y);
-    sky.addColorStop(0, "#0d3b8f");
-    sky.addColorStop(0.55, "#1e73e8");
-    sky.addColorStop(1, "#6bb6ff");
+    sky.addColorStop(0, "#0d3b8f"); sky.addColorStop(0.55, "#1e73e8"); sky.addColorStop(1, "#6bb6ff");
     ctx.fillStyle = sky; ctx.fillRect(-40, -40, W + 80, GROUND_Y + 60);
 
-    // Stars
     const tw = g ? g.time2 : 0;
-    for (const s of stars) {
-      const a = 0.4 + 0.6 * Math.abs(Math.sin(tw * 1.5 + s.tw));
-      ctx.fillStyle = `rgba(246,233,215,${(a * 0.7).toFixed(2)})`;
-      ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2); ctx.fill();
-    }
-
-    // Clouds
+    for (const s of stars) { const a = 0.4 + 0.6 * Math.abs(Math.sin(tw * 1.5 + s.tw)); ctx.fillStyle = `rgba(246,233,215,${(a * 0.5).toFixed(2)})`; ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2); ctx.fill(); }
     if (g) { ctx.fillStyle = "rgba(246,233,215,0.13)"; g.clouds.forEach(c => drawCloud(c.x, c.y, c.s)); }
 
-    // Distant wall with guards
     drawBackWall();
 
-    // Ground
     const ground = ctx.createLinearGradient(0, GROUND_Y, 0, H);
     ground.addColorStop(0, "#e0b074"); ground.addColorStop(1, "#a9762f");
     ctx.fillStyle = ground; ctx.fillRect(-40, GROUND_Y, W + 80, H - GROUND_Y + 40);
-    // ground texture lines
     ctx.strokeStyle = "rgba(120,80,30,0.25)"; ctx.lineWidth = 1;
     for (let i = 1; i < 6; i++) { const y = GROUND_Y + i * ((H - GROUND_Y) / 6); ctx.beginPath(); ctx.moveTo(-40, y); ctx.lineTo(W + 40, y); ctx.stroke(); }
 
-    // Start line
     ctx.strokeStyle = "rgba(255,255,255,0.5)"; ctx.lineWidth = 4; ctx.setLineDash([12, 10]);
     ctx.beginPath(); ctx.moveTo(90, GROUND_Y); ctx.lineTo(90, H); ctx.stroke(); ctx.setLineDash([]);
 
-    // Finish line
     drawFinishLine(FINISH_X, GROUND_Y);
-
-    // Doll
     drawDoll(FINISH_X + 22, GROUND_Y, g ? g.dollAngle : 0);
 
-    // Particles behind player
     if (g) drawParticles(g);
 
-    // Player
-    if (g) drawRunner(playerX(g), playerY(), g);
-
-    // Progress bar
+    // Racers back-to-front (larger laneY drawn last / on top)
     if (g) {
-      const barY = H - 26;
-      ctx.fillStyle = "rgba(0,0,0,0.4)"; ctx.fillRect(90, barY, FINISH_X - 90, 10);
-      ctx.fillStyle = g.light === "green" ? "#16c1b8" : "#ed1b76";
-      ctx.fillRect(90, barY, (FINISH_X - 90) * (g.dist / TRACK_LEN), 10);
+      const order = [...g.racers].sort((a, b) => LANE_Y[a.laneIndex] - LANE_Y[b.laneIndex]);
+      for (const r of order) drawRunner(r, LANE_S[r.laneIndex]);
+      drawStandings(g);
     }
 
-    // Red danger vignette when watching + sliding
+    if (g) {
+      const barY = H - 22;
+      ctx.fillStyle = "rgba(0,0,0,0.4)"; ctx.fillRect(90, barY, FINISH_X - 90, 9);
+      ctx.fillStyle = g.light === "green" ? "#16c1b8" : "#ed1b76";
+      ctx.fillRect(90, barY, (FINISH_X - 90) * (g.human.dist / TRACK_LEN), 9);
+    }
+
     if (g && g.warnPulse > 0) {
-      const vg = ctx.createRadialGradient(W/2, H/2, H*0.3, W/2, H/2, H*0.75);
-      vg.addColorStop(0, "rgba(237,27,118,0)");
-      vg.addColorStop(1, `rgba(237,27,118,${(0.5 * g.warnPulse).toFixed(2)})`);
-      ctx.fillStyle = vg; ctx.fillRect(-40, -40, W + 80, H + 80);
+      const vgr = ctx.createRadialGradient(W/2, H/2, H*0.3, W/2, H/2, H*0.75);
+      vgr.addColorStop(0, "rgba(237,27,118,0)"); vgr.addColorStop(1, `rgba(237,27,118,${(0.5 * g.warnPulse).toFixed(2)})`);
+      ctx.fillStyle = vgr; ctx.fillRect(-40, -40, W + 80, H + 80);
     }
 
     ctx.restore();
 
-    // Global vignette
     const vig = ctx.createRadialGradient(W/2, H/2, H*0.4, W/2, H/2, H*0.85);
     vig.addColorStop(0, "rgba(0,0,0,0)"); vig.addColorStop(1, "rgba(0,0,0,0.45)");
     ctx.fillStyle = vig; ctx.fillRect(0, 0, W, H);
@@ -789,225 +664,167 @@
     const wy = GROUND_Y - 46;
     ctx.fillStyle = "#5a3242"; ctx.fillRect(-40, wy, W + 80, 46);
     ctx.fillStyle = "rgba(0,0,0,0.2)"; ctx.fillRect(-40, wy, W + 80, 8);
-    // pink guards along wall
-    const guardShapes = ["circle", "triangle", "square", "circle", "triangle", "square"];
-    for (let i = 0; i < 6; i++) {
-      const gx = 60 + i * 150; drawGuard(gx, wy - 4, guardShapes[i]);
-    }
+    const shapes = ["circle", "triangle", "square", "circle", "triangle", "square"];
+    for (let i = 0; i < 6; i++) drawGuard(60 + i * 150, wy - 4, shapes[i]);
   }
   function drawGuard(x, y, shape) {
-    // body
-    ctx.fillStyle = "#d1176e"; ctx.strokeStyle = "#7a0f42"; ctx.lineWidth = 1.5;
-    ctx.beginPath(); roundRectPath(x - 9, y - 34, 18, 36, 5); ctx.fill();
-    // head mask (black)
+    ctx.fillStyle = "#d1176e"; ctx.beginPath(); roundRectPath(x - 9, y - 34, 18, 36, 5); ctx.fill();
     ctx.fillStyle = "#111"; ctx.beginPath(); ctx.arc(x, y - 40, 8, 0, Math.PI * 2); ctx.fill();
-    // white symbol
-    ctx.fillStyle = "#f6e9d7";
-    ctx.save(); ctx.translate(x, y - 40);
+    ctx.fillStyle = "#f6e9d7"; ctx.save(); ctx.translate(x, y - 40);
     if (shape === "circle") { ctx.beginPath(); ctx.arc(0, 0, 3, 0, Math.PI * 2); ctx.fill(); }
     else if (shape === "triangle") { ctx.beginPath(); ctx.moveTo(0, -3.5); ctx.lineTo(3, 2.5); ctx.lineTo(-3, 2.5); ctx.closePath(); ctx.fill(); }
-    else { ctx.fillRect(-2.5, -2.5, 5, 5); }
+    else ctx.fillRect(-2.5, -2.5, 5, 5);
     ctx.restore();
   }
 
   function drawFinishLine(x, groundY) {
     const sq = 12, rows = Math.ceil((H - groundY + 40) / sq);
-    for (let r = 0; r < rows; r++)
-      for (let c = 0; c < 2; c++) {
-        ctx.fillStyle = (r + c) % 2 === 0 ? "#f6e9d7" : "#101018";
-        ctx.fillRect(x + c * sq, groundY + r * sq, sq, sq);
-      }
-    // banner pole
+    for (let r = 0; r < rows; r++) for (let c = 0; c < 2; c++) { ctx.fillStyle = (r + c) % 2 === 0 ? "#f6e9d7" : "#101018"; ctx.fillRect(x + c * sq, groundY + r * sq, sq, sq); }
     ctx.fillStyle = "#8a8a9a"; ctx.fillRect(x - 2, groundY - 60, 5, 60);
   }
 
   function drawDoll(x, groundY, angle) {
     const baseY = groundY, bodyH = 210, topY = baseY - bodyH;
-
-    // legs
-    ctx.fillStyle = "#d8d2c0";
-    ctx.fillRect(x + 6, baseY - 40, 12, 40);
-    ctx.fillRect(x + 26, baseY - 40, 12, 40);
-    // shoes
+    ctx.fillStyle = "#d8d2c0"; ctx.fillRect(x + 6, baseY - 40, 12, 40); ctx.fillRect(x + 26, baseY - 40, 12, 40);
     ctx.fillStyle = "#3a2a20"; ctx.fillRect(x + 4, baseY - 8, 16, 8); ctx.fillRect(x + 24, baseY - 8, 16, 8);
-
-    // dress (orange)
-    ctx.fillStyle = "#e8873a";
-    ctx.beginPath();
-    ctx.moveTo(x - 14, baseY - 36);
-    ctx.lineTo(x + 58, baseY - 36);
-    ctx.lineTo(x + 42, topY + 78);
-    ctx.lineTo(x + 2, topY + 78);
-    ctx.closePath(); ctx.fill();
-    // dress shading
-    ctx.fillStyle = "rgba(0,0,0,0.12)";
-    ctx.beginPath(); ctx.moveTo(x + 22, baseY - 36); ctx.lineTo(x + 58, baseY - 36); ctx.lineTo(x + 42, topY + 78); ctx.lineTo(x + 22, topY + 78); ctx.closePath(); ctx.fill();
-
-    // yellow shirt
+    ctx.fillStyle = "#e8873a"; ctx.beginPath(); ctx.moveTo(x - 14, baseY - 36); ctx.lineTo(x + 58, baseY - 36); ctx.lineTo(x + 42, topY + 78); ctx.lineTo(x + 2, topY + 78); ctx.closePath(); ctx.fill();
+    ctx.fillStyle = "rgba(0,0,0,0.12)"; ctx.beginPath(); ctx.moveTo(x + 22, baseY - 36); ctx.lineTo(x + 58, baseY - 36); ctx.lineTo(x + 42, topY + 78); ctx.lineTo(x + 22, topY + 78); ctx.closePath(); ctx.fill();
     ctx.fillStyle = "#f4d03f"; ctx.fillRect(x + 2, topY + 58, 40, 26);
     ctx.fillStyle = "rgba(0,0,0,0.1)"; ctx.fillRect(x + 22, topY + 58, 20, 26);
-
-    // arms
     ctx.strokeStyle = "#f4d03f"; ctx.lineWidth = 13; ctx.lineCap = "round";
-    ctx.beginPath();
-    ctx.moveTo(x + 6, topY + 76); ctx.lineTo(x - 12, topY + 128);
-    ctx.moveTo(x + 40, topY + 76); ctx.lineTo(x + 58, topY + 128);
-    ctx.stroke();
-    // hands
-    ctx.fillStyle = "#f2c9a0";
-    ctx.beginPath(); ctx.arc(x - 12, topY + 130, 6, 0, Math.PI * 2); ctx.fill();
-    ctx.beginPath(); ctx.arc(x + 58, topY + 130, 6, 0, Math.PI * 2); ctx.fill();
-
-    // neck
+    ctx.beginPath(); ctx.moveTo(x + 6, topY + 76); ctx.lineTo(x - 12, topY + 128); ctx.moveTo(x + 40, topY + 76); ctx.lineTo(x + 58, topY + 128); ctx.stroke();
+    ctx.fillStyle = "#f2c9a0"; ctx.beginPath(); ctx.arc(x - 12, topY + 130, 6, 0, Math.PI * 2); ctx.fill(); ctx.beginPath(); ctx.arc(x + 58, topY + 130, 6, 0, Math.PI * 2); ctx.fill();
     ctx.fillStyle = "#f2c9a0"; ctx.fillRect(x + 16, topY + 46, 12, 16);
-
-    // head
     const hx = x + 22, hy = topY + 30;
-    ctx.fillStyle = "#f2c9a0";
-    ctx.beginPath(); ctx.arc(hx, hy, 32, 0, Math.PI * 2); ctx.fill();
-
-    // hair bob (black), shifts subtly with turn
+    ctx.fillStyle = "#f2c9a0"; ctx.beginPath(); ctx.arc(hx, hy, 32, 0, Math.PI * 2); ctx.fill();
     const shift = (angle - 0.5) * 6;
-    ctx.fillStyle = "#141414";
-    ctx.beginPath(); ctx.arc(hx, hy - 4, 33, Math.PI, Math.PI * 2); ctx.fill();
-    ctx.fillRect(hx - 33, hy - 6, 66, 16);
-    ctx.fillRect(hx - 33 + shift, hy - 6, 9, 40);
-    ctx.fillRect(hx + 24 + shift, hy - 6, 9, 40);
-    // bangs
+    ctx.fillStyle = "#141414"; ctx.beginPath(); ctx.arc(hx, hy - 4, 33, Math.PI, Math.PI * 2); ctx.fill();
+    ctx.fillRect(hx - 33, hy - 6, 66, 16); ctx.fillRect(hx - 33 + shift, hy - 6, 9, 40); ctx.fillRect(hx + 24 + shift, hy - 6, 9, 40);
     ctx.beginPath(); ctx.moveTo(hx - 33, hy - 4); ctx.lineTo(hx + 33, hy - 4); ctx.lineTo(hx + 20, hy + 6); ctx.lineTo(hx - 20, hy + 6); ctx.closePath(); ctx.fill();
-
-    // face — visible when turned toward player
     const faceVis = Math.max(0, (angle - 0.3) / 0.7);
     if (faceVis > 0) {
       ctx.globalAlpha = faceVis;
-      // eyes
-      ctx.fillStyle = "#141414";
-      ctx.beginPath(); ctx.arc(hx - 10, hy + 3, 4.5, 0, Math.PI * 2); ctx.fill();
-      ctx.beginPath(); ctx.arc(hx + 10, hy + 3, 4.5, 0, Math.PI * 2); ctx.fill();
-      // eye glint
-      ctx.fillStyle = "#fff";
-      ctx.beginPath(); ctx.arc(hx - 8.5, hy + 1.5, 1.4, 0, Math.PI * 2); ctx.fill();
-      ctx.beginPath(); ctx.arc(hx + 11.5, hy + 1.5, 1.4, 0, Math.PI * 2); ctx.fill();
-      // blush
-      ctx.fillStyle = "rgba(237,27,118,0.5)";
-      ctx.beginPath(); ctx.arc(hx - 17, hy + 14, 5, 0, Math.PI * 2); ctx.fill();
-      ctx.beginPath(); ctx.arc(hx + 17, hy + 14, 5, 0, Math.PI * 2); ctx.fill();
-      // mouth
-      ctx.strokeStyle = "#b0301b"; ctx.lineWidth = 2.5;
-      ctx.beginPath(); ctx.arc(hx, hy + 14, 6, 0.15 * Math.PI, 0.85 * Math.PI); ctx.stroke();
+      ctx.fillStyle = "#141414"; ctx.beginPath(); ctx.arc(hx - 10, hy + 3, 4.5, 0, Math.PI * 2); ctx.fill(); ctx.beginPath(); ctx.arc(hx + 10, hy + 3, 4.5, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = "#fff"; ctx.beginPath(); ctx.arc(hx - 8.5, hy + 1.5, 1.4, 0, Math.PI * 2); ctx.fill(); ctx.beginPath(); ctx.arc(hx + 11.5, hy + 1.5, 1.4, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = "rgba(237,27,118,0.5)"; ctx.beginPath(); ctx.arc(hx - 17, hy + 14, 5, 0, Math.PI * 2); ctx.fill(); ctx.beginPath(); ctx.arc(hx + 17, hy + 14, 5, 0, Math.PI * 2); ctx.fill();
+      ctx.strokeStyle = "#b0301b"; ctx.lineWidth = 2.5; ctx.beginPath(); ctx.arc(hx, hy + 14, 6, 0.15 * Math.PI, 0.85 * Math.PI); ctx.stroke();
       ctx.globalAlpha = 1;
     }
-    // pigtails when facing away
-    if (angle < 0.55) {
-      ctx.globalAlpha = 1 - angle * 1.8;
-      ctx.fillStyle = "#141414";
-      ctx.beginPath(); ctx.arc(hx - 26, hy + 8, 9, 0, Math.PI * 2); ctx.fill();
-      ctx.beginPath(); ctx.arc(hx + 26, hy + 8, 9, 0, Math.PI * 2); ctx.fill();
-      ctx.globalAlpha = 1;
-    }
-
-    // scanning beam / glowing eyes when watching
+    if (angle < 0.55) { ctx.globalAlpha = 1 - angle * 1.8; ctx.fillStyle = "#141414"; ctx.beginPath(); ctx.arc(hx - 26, hy + 8, 9, 0, Math.PI * 2); ctx.fill(); ctx.beginPath(); ctx.arc(hx + 26, hy + 8, 9, 0, Math.PI * 2); ctx.fill(); ctx.globalAlpha = 1; }
     if (angle > 0.72) {
       const t = (angle - 0.72) / 0.28;
       ctx.fillStyle = `rgba(237,27,118,${(t * 0.22).toFixed(2)})`;
-      ctx.beginPath(); ctx.moveTo(hx, hy); ctx.lineTo(hx - 280, baseY + 60); ctx.lineTo(hx + 90, baseY + 60); ctx.closePath(); ctx.fill();
-      // red eye glow
-      ctx.fillStyle = `rgba(255,40,90,${(t*0.9).toFixed(2)})`;
-      ctx.beginPath(); ctx.arc(hx - 10, hy + 3, 2.2, 0, Math.PI*2); ctx.fill();
-      ctx.beginPath(); ctx.arc(hx + 10, hy + 3, 2.2, 0, Math.PI*2); ctx.fill();
+      ctx.beginPath(); ctx.moveTo(hx, hy); ctx.lineTo(hx - 300, baseY + 60); ctx.lineTo(hx + 90, baseY + 60); ctx.closePath(); ctx.fill();
+      ctx.fillStyle = `rgba(255,40,90,${(t * 0.9).toFixed(2)})`;
+      ctx.beginPath(); ctx.arc(hx - 10, hy + 3, 2.2, 0, Math.PI * 2); ctx.fill(); ctx.beginPath(); ctx.arc(hx + 10, hy + 3, 2.2, 0, Math.PI * 2); ctx.fill();
     }
   }
 
-  function drawRunner(x, y, g) {
-    const moving = g.vel > 0.4 && state === GameState.PLAYING;
-    const phase = g.runPhase;
-    const intensity = Math.min(1, g.vel / DIFF[difficulty].speed);
-    const legSwing = moving ? Math.sin(phase) * 15 * intensity : 0;
-    const legSwing2 = moving ? Math.sin(phase + Math.PI) * 15 * intensity : 0;
-    const armSwing = moving ? Math.sin(phase + Math.PI) * 12 * intensity : 3;
-    const armSwing2 = moving ? Math.sin(phase) * 12 * intensity : -3;
-    const bob = moving ? Math.abs(Math.cos(phase)) * 5 * intensity : 0;
+  function drawRunner(r, laneScale) {
+    const c = CHARACTERS[r.key];
+    const x = racerX(r), yb = LANE_Y[r.laneIndex];
+    const moving = r.vel > 0.4 && state === GameState.PLAYING;
+    const intensity = Math.min(1, r.vel / DIFF[difficulty].speed);
+    const p = r.runPhase;
+    const legF = moving ? Math.sin(p) * 15 * intensity : 0;
+    const legB = moving ? Math.sin(p + Math.PI) * 15 * intensity : 0;
+    const armF = moving ? Math.sin(p + Math.PI) * 12 * intensity : 3;
+    const armB = moving ? Math.sin(p) * 12 * intensity : -3;
+    const bob = moving ? Math.abs(Math.cos(p)) * 5 * intensity : 0;
     const lean = moving ? 4 * intensity : 0;
-    const cy = y - bob;
-    const c = CHARACTERS[character];
-    const teal = c.color, tealDk = darken(c.color, 0.6), skin = "#f2c9a0", hairCol = c.hair;
+    const body = c.color, bodyDk = darken(c.color, 0.6), skin = "#f2c9a0", hair = c.hair;
 
-    // skill activation glow
-    if (g.skillFx > 0) {
-      ctx.save();
-      ctx.globalAlpha = g.skillFx;
-      const gr = ctx.createRadialGradient(x, cy, 4, x, cy, 46);
+    ctx.save();
+    ctx.translate(x, yb);
+    ctx.scale(laneScale, laneScale);
+
+    ctx.fillStyle = "rgba(0,0,0,0.28)"; ctx.beginPath(); ctx.ellipse(0, 2, 20, 5, 0, 0, Math.PI * 2); ctx.fill();
+
+    if (!r.isAI && game && game.skillFx > 0) {
+      ctx.save(); ctx.globalAlpha = game.skillFx;
+      const gr = ctx.createRadialGradient(0, -40, 4, 0, -40, 50);
       gr.addColorStop(0, "rgba(255,255,255,0.7)"); gr.addColorStop(1, "rgba(255,255,255,0)");
-      ctx.fillStyle = gr; ctx.beginPath(); ctx.arc(x, cy, 46, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = gr; ctx.beginPath(); ctx.arc(0, -40, 50, 0, Math.PI * 2); ctx.fill();
       ctx.restore();
     }
 
-    // shadow
-    ctx.fillStyle = "rgba(0,0,0,0.28)";
-    ctx.beginPath(); ctx.ellipse(x, y + 44, 22, 6, 0, 0, Math.PI * 2); ctx.fill();
+    if (r.caught) {
+      // fallen pose: lie down, then a cross
+      ctx.globalAlpha = 0.85;
+    }
 
-    ctx.save(); ctx.translate(x, cy); ctx.rotate(lean * Math.PI / 180);
+    ctx.translate(0, -bob);
+    ctx.rotate(lean * Math.PI / 180);
 
-    // back leg
-    ctx.strokeStyle = tealDk; ctx.lineWidth = 9; ctx.lineCap = "round";
-    ctx.beginPath(); ctx.moveTo(0, 18); ctx.lineTo(6 + legSwing2, 44); ctx.stroke();
-    ctx.fillStyle = "#e8e8e8"; ctx.beginPath(); ctx.arc(6 + legSwing2, 45, 4, 0, Math.PI*2); ctx.fill();
-    // back arm
-    ctx.strokeStyle = tealDk; ctx.lineWidth = 6;
-    ctx.beginPath(); ctx.moveTo(0, -6); ctx.lineTo(10 + armSwing2, 12); ctx.stroke();
+    // back leg + arm
+    ctx.strokeStyle = bodyDk; ctx.lineWidth = 8; ctx.lineCap = "round";
+    ctx.beginPath(); ctx.moveTo(0, -24); ctx.lineTo(6 + legB, 0); ctx.stroke();
+    ctx.fillStyle = "#e8e8e8"; ctx.beginPath(); ctx.arc(6 + legB, 0, 4, 0, Math.PI * 2); ctx.fill();
+    ctx.strokeStyle = bodyDk; ctx.lineWidth = 6; ctx.beginPath(); ctx.moveTo(0, -50); ctx.lineTo(10 + armB, -32); ctx.stroke();
 
     // torso
-    ctx.fillStyle = teal; roundRectPath(-12, -14, 24, 34, 7); ctx.fill();
-    // side stripe (tracksuit)
-    ctx.fillStyle = "#f6e9d7"; ctx.fillRect(-12, -10, 3, 26);
-    // number
-    ctx.fillStyle = "#f6e9d7"; ctx.font = "bold 10px sans-serif"; ctx.textAlign = "center";
-    ctx.fillText("456", 0, 6);
+    ctx.fillStyle = body; roundRectPath(-12, -56, 24, 32, 7); ctx.fill();
+    ctx.fillStyle = "#f6e9d7"; ctx.fillRect(-12, -52, 3, 26);
+    ctx.fillStyle = "#f6e9d7"; ctx.font = "bold 10px sans-serif"; ctx.textAlign = "center"; ctx.fillText(c.no, 0, -34);
 
-    // front leg
-    ctx.strokeStyle = teal; ctx.lineWidth = 9;
-    ctx.beginPath(); ctx.moveTo(0, 18); ctx.lineTo(-6 + legSwing, 44); ctx.stroke();
-    ctx.fillStyle = "#fff"; ctx.beginPath(); ctx.arc(-6 + legSwing, 45, 4, 0, Math.PI*2); ctx.fill();
-    // front arm
-    ctx.strokeStyle = teal; ctx.lineWidth = 6;
-    ctx.beginPath(); ctx.moveTo(0, -6); ctx.lineTo(-10 + armSwing, 12); ctx.stroke();
-    ctx.fillStyle = skin; ctx.beginPath(); ctx.arc(-10 + armSwing, 13, 3.5, 0, Math.PI*2); ctx.fill();
+    // front leg + arm
+    ctx.strokeStyle = body; ctx.lineWidth = 8; ctx.beginPath(); ctx.moveTo(0, -24); ctx.lineTo(-6 + legF, 0); ctx.stroke();
+    ctx.fillStyle = "#fff"; ctx.beginPath(); ctx.arc(-6 + legF, 0, 4, 0, Math.PI * 2); ctx.fill();
+    ctx.strokeStyle = body; ctx.lineWidth = 6; ctx.beginPath(); ctx.moveTo(0, -50); ctx.lineTo(-10 + armF, -32); ctx.stroke();
+    ctx.fillStyle = skin; ctx.beginPath(); ctx.arc(-10 + armF, -31, 3.5, 0, Math.PI * 2); ctx.fill();
 
     // head
-    ctx.fillStyle = skin; ctx.beginPath(); ctx.arc(0, -24, 10, 0, Math.PI * 2); ctx.fill();
-    ctx.fillStyle = hairCol; ctx.beginPath(); ctx.arc(0, -26, 10, Math.PI, 0); ctx.fill();
-    // ear/face hint
-    ctx.fillStyle = skin; ctx.fillRect(3, -25, 3, 5);
-
+    ctx.fillStyle = skin; ctx.beginPath(); ctx.arc(0, -66, 10, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = hair; ctx.beginPath(); ctx.arc(0, -68, 10, Math.PI, 0); ctx.fill();
+    ctx.fillStyle = skin; ctx.fillRect(3, -67, 3, 5);
+    ctx.globalAlpha = 1;
     ctx.restore();
 
-    // caught cross
-    if (g.caught && g.won === false) {
-      ctx.strokeStyle = "#ed1b76"; ctx.lineWidth = 5; ctx.lineCap = "round";
-      ctx.beginPath();
-      ctx.moveTo(x - 16, cy - 40); ctx.lineTo(x + 16, cy - 6);
-      ctx.moveTo(x + 16, cy - 40); ctx.lineTo(x - 16, cy - 6);
-      ctx.stroke();
+    // labels & markers in screen space
+    if (r.caught) {
+      const cy = yb - 40 * laneScale;
+      ctx.strokeStyle = "#ed1b76"; ctx.lineWidth = 4; ctx.lineCap = "round";
+      ctx.beginPath(); ctx.moveTo(x - 12, cy - 8); ctx.lineTo(x + 12, cy + 16); ctx.moveTo(x + 12, cy - 8); ctx.lineTo(x - 12, cy + 16); ctx.stroke();
+    }
+    if (!r.isAI) {
+      ctx.fillStyle = "#fff"; ctx.font = "bold 11px sans-serif"; ctx.textAlign = "center";
+      ctx.fillText("YOU", x, yb - 84 * laneScale);
     }
   }
 
   function drawParticles(g) {
     for (const p of g.particles) {
       const a = p.life / p.max;
-      if (p.c === "blood") ctx.fillStyle = `rgba(200,20,50,${a.toFixed(2)})`;
-      else ctx.fillStyle = `rgba(210,170,110,${(a * 0.7).toFixed(2)})`;
+      ctx.fillStyle = p.c === "blood" ? `rgba(200,20,50,${a.toFixed(2)})` : `rgba(210,170,110,${(a * 0.7).toFixed(2)})`;
       ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2); ctx.fill();
     }
   }
 
-  function darken(hex, f) {
-    const n = parseInt(hex.slice(1), 16);
-    const r = Math.round(((n >> 16) & 255) * f);
-    const g = Math.round(((n >> 8) & 255) * f);
-    const b = Math.round((n & 255) * f);
-    return `rgb(${r},${g},${b})`;
+  function standingVal(r) { if (r.finished) return r.rank; if (r.caught) return 100; return 10 + (100 - r.dist) / 100; }
+  function drawStandings(g) {
+    const order = [...g.racers].sort((a, b) => standingVal(a) - standingVal(b));
+    const bw = 176, lh = 22, bx = W - bw - 14, by = 92, bh = 12 + order.length * lh;
+    ctx.fillStyle = "rgba(13,13,22,0.8)"; ctx.beginPath(); roundRectPath(bx, by, bw, bh, 10); ctx.fill();
+    ctx.strokeStyle = "rgba(255,255,255,0.12)"; ctx.lineWidth = 1; ctx.stroke();
+    order.forEach((r, i) => {
+      const c = CHARACTERS[r.key];
+      const ly = by + 12 + i * lh + 10;
+      let status, scol;
+      if (r.finished) { status = "#" + r.rank; scol = r.rank === 1 ? "#ffd24a" : "#16c1b8"; }
+      else if (r.caught) { status = "OUT"; scol = "#ed1b76"; }
+      else { status = Math.floor(r.dist) + "%"; scol = "#cbb9a3"; }
+      ctx.textAlign = "left";
+      ctx.font = "bold 12px sans-serif"; ctx.fillStyle = c.color; ctx.fillText(c.no, bx + 10, ly);
+      ctx.font = "11px sans-serif"; ctx.fillStyle = r.isAI ? "#cbb9a3" : "#fff";
+      ctx.fillText(c.short + (r.isAI ? "" : " ★"), bx + 40, ly);
+      ctx.textAlign = "right"; ctx.fillStyle = scol; ctx.font = "bold 11px sans-serif"; ctx.fillText(status, bx + bw - 10, ly);
+    });
   }
 
+  function darken(hex, f) {
+    const n = parseInt(hex.slice(1), 16);
+    return `rgb(${Math.round(((n >> 16) & 255) * f)},${Math.round(((n >> 8) & 255) * f)},${Math.round((n & 255) * f)})`;
+  }
   function roundRectPath(x, y, w, h, r) {
     ctx.beginPath();
     ctx.moveTo(x + r, y);
